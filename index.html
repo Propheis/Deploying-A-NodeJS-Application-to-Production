@@ -300,6 +300,52 @@ server {
         </li>
       </ul>
     </div>
+
+    <div class="step">
+      <h2>4.b Check the website</h2>
+      <p>
+        If everything went nicely you should see something like this in your browser:
+      </p>
+      <img src="img/expressjs_screencap.png" class="center-block" style="max-width: 50%;">
+    </div>
+    <div class="step">
+      <h1>5. Next Steps</h1>
+      <p>
+        This concludes the main portion of the tutorial. These are some potential next steps you may want to explore:
+      </p>
+      <p>
+        <ul>
+          <li>
+            <p>
+              When you have a new version of your app, you can update your production server in two steps:
+            </p>
+            <code>git pull origin master &amp;&amp; pm2 restart <i>yourappID</i></code>
+          </li>
+          <li>
+            You can run your app on multiple droplets and have a load balancer distribute the demand across the servers.
+          </li>
+          <li>
+            You can easily add encryption to your application by getting an SSL certificate from <a href="https://letsencrypt.org/">Let's Encrypt.org</a>
+          </li>
+          <li>
+            You can monitor the performance of your application with <a href="https://keymetrics.io/">KeyMetrics.io</a>
+          </li>
+          <li>
+            You can automatically scale your application to new droplets as demand on your servers increase. Check out <a href="https://www.digitalocean.com/community/tutorials/how-to-automate-the-scaling-of-your-web-application-on-digitalocean">this article for details.</a>
+          </li>
+        </ul>
+      </p>
+    </div>
+    <div class="step">
+      <h1>Thanks for Your Time!</h1>
+      <p>
+        I hardly expect anyone to absorb everything that was talked about during this tutorial. There's a lot of material!
+      </p>
+      <p>
+        That's why I've made the presentation available <a href="https://propheis.github.io/Deploying-A-NodeJS-Application-to-Production/" style="font-size: 4rem; fotn-style: bold">here</a>.
+      </p>
+      <img src="http://imgs.xkcd.com/comics/will_it_work.png" class="center-block">
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/impressjs/0.5.3/impress.js" integrity="sha256-JjE2XVpHR8iApLdUSrSC5V2OlLthwHXjtFjs8RbXM3I=" crossorigin="anonymous"></script>

@@ -40,7 +40,7 @@
 
   $(document).ready(function(){
     
-    grid(6);
+    grid(4);
     // wheel();
     impress().init();
   });
