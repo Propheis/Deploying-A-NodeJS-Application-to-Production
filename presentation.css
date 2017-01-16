@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans+Extra+Condensed|Playfair+Display');
+
+body {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  background: url('img/bg.png');
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Fira Sans Extra Condensed', sans-serif;
+}
+
+#title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.impress-supported .fallback-message { display: none; }
+
+.step {
+  width: 95vw;
+  height: 95vh;
+  padding: 5vw;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 5px;
+}

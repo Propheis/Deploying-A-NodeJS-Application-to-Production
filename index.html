@@ -1,0 +1,309 @@
+<!doctype html>
+<html>
+<head>
+  <title>Deploying a NodeJS Application</title>
+  <meta name="author" content="Kevin Zuern">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw=" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="presentation.css">
+</head>
+<body class="impress-not-supported">
+  <div class="fallback-message">
+    <p>Your browser <span style="text-decoration: line-through;">sucks</span> doesn't support the features required by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+  </div>
+
+  <div id="impress">
+
+    <div id="title" class="step">
+      <h1>Deploying a NodeJS Application</h1>
+      <p class="footnote">Kevin Zuern</p>
+      <p class="footnote">Queen's University</p>
+    </div>
+
+    <div id="overview" class="step">
+      <h1>What We'll Discuss</h1>
+      <p>In this presentation we will go over</p>
+      <ul>
+        <li>How to configure a web server for nodeJS</li>
+        <li>How to configure a domain name with DNS</li>
+        <li>How to deploy a nodeJS application to the server</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h1>Referenced Material/Useful Links</h1>
+      <ol>
+        <li>
+          <a href="https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-8">How to Set Up a nodeJS Application for Production on Debian 8</a>
+          <p>
+            This is the primary guide referenced for this presentation. It covers how to configure NginX and PM2.
+          </p>
+        </li>
+        <li>
+          <a href="https://www.digitalocean.com/community/tutorials/an-introduction-to-dns-terminology-components-and-concepts">An Introduction to DNS Terminology: Components and Concepts</a>
+          <p>
+            This provides some additional info about DNS and Domains.
+          </p>
+        </li>
+        <li>
+          <a href="https://duckdns.org">Duck DNS. </a>
+          <p>
+            DuckDNS is an amazing (and free) dynamic DNS provider. We use them to get a domain name quickly and completely free. These guys are amazing! &#9829;
+          </p>
+        </li>
+        <li>
+          <a href="https://digitalocean.com">Digital Ocean</a>
+          <p>
+            Digital Ocean is a really great cloud computing platform. They provide a server with the hardware you need and a remote shell. That's it. What you install and do with it is up to you. They are a great platform that let's you scale your application to a worldwide level if you wish.
+          </p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h1>The battle plan</h1>
+      <p>
+        The plan is to:
+        <ol>
+          <li>Create and configure a server.</li>
+          <li>Install any required packages to the server</li>
+          <li>Deploy our application</li>
+          <li>Set up the app with PM2 to restart automatically if it crashes</li>
+          <li>Set up the server to restart PM2 when the server boots</li>
+          <li>Set up NginX to reverse proxy all HTTP traffic to the app</li>
+          <li>Create and configure a domain name to point to our web server.</li>
+        </ol>
+      </p>
+    </div>
+
+    <div class="step">
+      <h1>1. Set up the Web Server</h1>
+      <p>We'll be using <a href="https://digitalocean.com">Digital Ocean</a> to host our web application.</p>
+      <p>Let's go there now and create our droplet.</p>
+    </div>
+
+    <div class="step">
+      <h2>1.a Create the droplet (container)</h2>
+      <p>
+        On Digital Ocean, LVM containers are called droplets. We'll create one to deploy our application on to.
+      </p>
+      <ol>
+        <li>Click the "Create Droplet" button</li>
+        <li>Select Ubuntu as your operating system</li>
+        <li>Select the hardware you need for your application</li>
+        <li>Select the data center you want your droplet created in</li>
+        <li>Add your SSH keys (if you want)</li>
+        <li>Set your hostname (if you want)</li>
+        <li>Click <span class="btn btn-success">Create</span></li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h2>1.c Installing Packages</h2>
+      <p>We're gonna need some packages on the server to run our app.</p>
+      <p>Connect to the server: <code>ssh root@<i>Your.IP.address.here</i></code></p>
+      <ul>
+        <li>
+          NodeJS &amp; NPM
+          <ul>
+            <li><code>apt-get install nodejs npm</code></li>
+          </ul>
+        </li>
+        <li>
+          The Web Server
+          <ul>
+            <li><code>apt-get install nginx</code></li>
+          </ul>
+        </li>
+        <li>
+          Restart the app on crash
+          <ul>
+            <li><code>npm install -g pm2</code></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h1>2. Configuring a Domain Name</h1>
+      <p>
+        We're going to be using <a href="https://duckdns.org">Duck DNS</a> to get a domain name. This will give us domain like <code>http://<i>yourdomainname</i>.duckdns.org</code>.
+      </p>
+      <p>
+        If you want a higher level domain (like a <code>.com</code> or <code>.me</code>) you'll need to buy one from a domain registrar like <a href="https://domain.com">Domain.com</a>. Since DuckDNS is free, that's what we're using.
+      </p>
+    </div>
+
+    <div class="step">
+      <h2>2.a Getting a domain name</h2>
+      <ol>
+        <li>
+          Go to <a href="https://duckdns.org">Duck DNS</a> and register an account. 
+        </li>
+        <li>
+          Type in your unique subdomain name and click "Add domain"
+        </li>
+        <li>
+          Update the IP address to the IP of your web server on Digital Ocean.
+        </li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h2>2.b Configure DNS on Digital Ocean</h2>
+      <p>We need to let Digital Ocean know about the domain name we created to point to our server</p>
+      <ol>
+        <li>
+          To do this, click on the "Networking" tab on the Digital Ocean console.</p>
+        </li>
+        <li>
+          Type in the domain name into the hostname text field and click <span class="btn btn-primary">Add Domain</span>.
+        </li>
+        <li>
+        Create an "A Record" to route traffic to your droplet. See <a href="https://www.digitalocean.com/community/tutorials/an-introduction-to-dns-terminology-components-and-concepts">this article</a> for more info
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Hostname</th>
+                <th>Will Direct To</th>
+                <th>TTL (Seconds)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>@</td>
+                <td>The droplet you created</td>
+                <td>3600</td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h1>Test out your webserver!</h1>
+      <p>
+        At this point we should have a running web server. Try pointing your browser to the domain name you registered. You should see a page something like this:
+      </p>
+      <img src="img/nginx_screencap.png" class="center-block" style="max-width: 50%;">
+    </div>
+
+    <div class="step">
+      <h1>3. Deploy Your Application</h1>
+      <p>We will do the following: </p>
+      <ol>
+        <li>Use git to download the latest version of the app</li>
+        <li>Set up PM2 to manage our application</li>
+        <li>Configure NginX to reverse proxy traffic to our app</li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h2>3.a Fetch the app using Git</h2>
+      <p>
+        We're going to download our app from Github, but first we need to connect to the webserver.
+      </p>
+      <ol>
+        <li>
+          <code>
+            ssh root@<i>yourdomain.duckdns.org</i>
+          </code>
+        </li>
+        <li>
+          <p>Let's put our app in the web directory of NginX.</p>
+<pre><code>cd /var/www
+git clone https://github.com/Propheis/exampleNodeApp.git
+cd exampleNodeApp
+npm install
+</code></pre>
+        </li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h2>3.b Set up PM2 to manage our app</h2>
+      <p>
+        PM2 manages your nodeJS application. It will restart the app whenever it crashes and keep track of how long it's been running, etc. See their <a href="https://www.npmjs.com/package/pm2">info page</a> for more info.
+      </p>
+      <ol>
+        <li>
+          <p>Start the application in the background</p>
+          <code>pm2 start bin/www --name "Your Application Name"</code>
+        </li>
+        <li>
+          <p>
+            If you get an error saying<br><code>/usr/bin/env: ‘node’: No such file or directory</code>:
+          </p>
+          <p>
+            Run this:<br><code>ln -s /usr/bin/nodejs /usr/bin/node</code><br> and then retry the previous step
+          </p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h2>3.c Set up PM2 to restart on boot</h2>
+      <p>
+        PM2 will now restart our app whenever it crashes, but if the server is shut down or rebooted it will not run PM2. Let's fix this now by setting up PM2 to start on boot.
+      </p>
+      <p>
+        <code>pm2 startup systemd</code>
+      </p>
+    </div>
+
+    <div class="step">
+      <h1>4. Configure NginX</h1>
+      <p>
+        Our app is now running on the server at <code>http://localhost:3000</code>, but this is not accessible from the web. We're going to configure NginX to take all traffic to the server and reverse proxy it to our app. This will let us access the app from the internet. See <a href="https://www.nginx.com/resources/admin-guide/reverse-proxy/">NginX Docs</a> for more information
+      </p>
+    </div>
+    <div class="step">
+      <h2>4.a Editing the Block Configuration File</h2>
+      <p>
+        We are going to be deleting the default server block and writing our own.
+      </p>
+<pre><code>rm /etc/nginx/sites-available/default
+touch /etc/nginx/sites-available/default</code></pre>
+      <p>
+        Insert the following configuration making sure to substitute your domain in to the <code>server_name</code> field. You can use an editor like nano to do this: <code>nano /etc/nginx/sites-available/default</code>
+      </p>
+      <p>
+<pre class="pre-scrollable"><code># /etc/nginx/sites-available/default
+server {
+    listen 80;
+
+    server_name <b><u>yourdomainname</u></b>.duckdns.org;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+</code></pre></p>
+      <ul>
+        <li>
+          <p>Let's check that we didn't make any mistakes.</p>
+          <code>nginx -t</code>
+        </li>
+        <li>
+          <p>If everything was okay, let's restart NginX.</p>
+          <code>systemctl restart nginx</code>
+        </li>
+        <li>
+          <p>Let's check if our website is up!</p>
+          <p>Go to <code>http://<i>yourdomainname</i>.duckdns.org</code></p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/impressjs/0.5.3/impress.js" integrity="sha256-JjE2XVpHR8iApLdUSrSC5V2OlLthwHXjtFjs8RbXM3I=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/jquery/3.1.1/jquery.slim.min.js" integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="site.js"></script>
+</body>
+</html>
