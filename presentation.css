@@ -2,12 +2,13 @@
 
 body {
   font-family: 'Playfair Display', serif;
-  font-size: 18px;
+  font-size: 20px;
   background: url('img/bg.png');
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Fira Sans Extra Condensed', sans-serif;
+  font-size: 1.2em;
 }
 
 #title {
@@ -17,12 +18,16 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
+#title h1 {
+  font-size: 2em;
+}
+
 .impress-supported .fallback-message { display: none; }
 
 .step {
   width: 95vw;
   height: 95vh;
+  background: #fff;
   padding: 5vw;
-  background: rgba(255, 255, 255, 0.6);
   border-radius: 5px;
 }
